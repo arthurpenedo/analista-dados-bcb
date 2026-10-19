@@ -1,5 +1,7 @@
 # analista-dados-bcb
 
+[![CI](https://github.com/arthurpenedo/analista-dados-bcb/actions/workflows/ci.yml/badge.svg)](https://github.com/arthurpenedo/analista-dados-bcb/actions/workflows/ci.yml)
+
 Pergunte em português sobre **juros, inflação e reclamações dos bancos** e receba tabela, gráfico e o **SQL usado**.
 A pergunta vira SQL num DuckDB alimentado pelas APIs abertas do Banco Central (SGS e Olinda), e **uma trava
 garante que só roda leitura, só nas tabelas permitidas**.
