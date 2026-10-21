@@ -47,6 +47,42 @@ def rodar(banco: str, motor: str = "regras", modelo: str = llm.MODELO_PADRAO, ch
     return itens
 
 
+def pagina_html(itens: list[Item], motor: str = "regras") -> str:
+    """Página estática: cada pergunta, o SQL gerado e se o resultado bateu com a referência."""
+    from html import escape
+
+    acertos = sum(i.acertou for i in itens)
+    total = len(itens) or 1
+    linhas = "".join(
+        "<tr class='{cls}'><td>{id}</td><td>{perg}</td><td><code>{sql}</code></td><td>{res}</td></tr>".format(
+            cls="ok" if i.acertou else "erro",
+            id=escape(i.id),
+            perg=escape(i.pergunta),
+            sql=escape(i.sql or "(sem SQL)"),
+            res="certo" if i.acertou else "errado: " + escape(i.motivo),
+        )
+        for i in itens
+    )
+    css = (
+        "body{font-family:system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem}"
+        "table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid #ddd;padding:.4rem;"
+        "text-align:left;vertical-align:top}code{font-size:.8rem;word-break:break-word}"
+        "tr.ok td:last-child{color:#0a6b2d}tr.erro td:last-child{color:#b00020;font-weight:600}"
+    )
+    return (
+        "<!doctype html><html lang='pt-BR'><head><meta charset='utf-8'>"
+        f"<title>analista-dados-bcb: benchmark</title><style>{css}</style></head><body>"
+        "<h1>analista-dados-bcb: benchmark</h1>"
+        f"<p>Motor <b>{escape(motor)}</b>: <b>{acertos}/{len(itens)}</b> ({100 * acertos / total:.1f}%) "
+        "de acerto por execução (resultado do SQL gerado igual ao do SQL de referência). "
+        "<a href='https://github.com/arthurpenedo/analista-dados-bcb'>Código no GitHub</a>.</p>"
+        "<table><tr><th>id</th><th>Pergunta</th><th>SQL gerado</th><th>Resultado</th></tr>"
+        f"{linhas}</table>"
+        "<p><small>Perguntas e referências escritas pelo autor; dados abertos do Banco Central.</small></p>"
+        "</body></html>"
+    )
+
+
 def resumo(itens: list[Item]) -> str:
     por_grupo: dict[str, list[Item]] = {}
     for i in itens:

@@ -50,6 +50,12 @@ pytest
 ```
 Tudo gratuito: APIs abertas do BCB, DuckDB e modelo aberto local. Nada de API paga.
 
+## Página de demo
+`analista-dados-bcb benchmark --html site/index.html` gera uma página estática com cada pergunta, o SQL gerado e se o
+resultado bateu com a referência. O workflow `.github/workflows/pagina.yml` coleta os dados, roda o benchmark com o motor
+de regras e publica no GitHub Pages toda segunda e sob demanda (ativar uma vez em Settings → Pages → Source = GitHub
+Actions). Link: https://arthurpenedo.github.io/analista-dados-bcb/ (vale depois da primeira execução).
+
 ## Números medidos (09/10/2026, no meu PC)
 | Medida | Valor |
 |---|---|

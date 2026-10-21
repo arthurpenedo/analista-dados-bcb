@@ -43,6 +43,9 @@ def _benchmark(args) -> int:
         with open(args.saida, "w", encoding="utf-8") as f:
             f.write(f"# Benchmark ({args.motor}" + (f", {args.modelo}" if args.motor == "ollama" else "") + ")\n\n")
             f.write("```\n" + texto + "\n```\n")
+    if args.html:
+        with open(args.html, "w", encoding="utf-8") as f:
+            f.write(benchmark.pagina_html(itens, args.motor))
     return 0
 
 
@@ -62,6 +65,7 @@ def main(argv: list[str] | None = None) -> int:
     pp.set_defaults(fn=_perguntar)
     pb = sub.add_parser("benchmark", help="mede o acerto nas perguntas de referência")
     pb.add_argument("--saida", help="grava o resultado num .md")
+    pb.add_argument("--html", help="grava a página de demo (pergunta, SQL gerado, certo/errado)")
     com_motor(pb)
     pb.set_defaults(fn=_benchmark)
     args = p.parse_args(argv)

@@ -127,6 +127,26 @@ def test_benchmark_conta_acertos_e_erros(banco):
     assert "1/3" in benchmark.resumo(itens)
 
 
+def test_pagina_html_mostra_acertos_erros_e_escapa(banco):
+    pergs = [
+        ("s01", "Qual a Selic atual?", "SELECT data, valor FROM serie_sgs WHERE serie='selic_meta' ORDER BY data DESC LIMIT 1"),
+        ("s02", "Qual a Selic atual?", "SELECT 1, 2"),
+        ("r99", "Quem <ganhou> a Copa?", "SELECT 1"),
+    ]
+    html = benchmark.pagina_html(benchmark.rodar(banco, perguntas=pergs))
+    assert "<b>1/3</b>" in html and "33.3%" in html
+    assert "errado: resultado diferente" in html and "errado: sem SQL" in html
+    assert "(sem SQL)" in html and "Quem &lt;ganhou&gt;" in html
+
+
+def test_cli_benchmark_grava_html(banco, tmp_path):
+    from analista_dados_bcb import cli
+
+    saida = tmp_path / "demo.html"
+    assert cli.main(["--banco", banco, "benchmark", "--html", str(saida)]) == 0
+    assert saida.read_text(encoding="utf-8").startswith("<!doctype html>")
+
+
 @pytest.mark.parametrize("pergunta", ["Qual a Selic atual?", "Qual o último IPCA?", "Qual o IGP-M mais recente?"])
 def test_series_basicas(banco, pergunta):
     assert perguntar(banco, pergunta).ok
