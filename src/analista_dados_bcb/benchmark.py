@@ -15,7 +15,7 @@ def normalizar_linhas(linhas: list[tuple]) -> list[tuple]:
     """Ignora nomes de coluna e ordem das linhas; números comparados com 4 casas."""
     def v(x):
         return round(x, 4) if isinstance(x, float) else x
-    return sorted((tuple(v(x) for x in l) for l in linhas), key=repr)
+    return sorted((tuple(v(x) for x in lin) for lin in linhas), key=repr)
 
 
 @dataclass

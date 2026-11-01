@@ -42,7 +42,7 @@ def test_pergunta_desconhecida_devolve_none():
 
 def test_regras_respondem_no_banco_de_teste(banco):
     r = perguntar(banco, "Quais bancos tiveram mais reclamações no último trimestre?")
-    assert r.ok and [l[0] for l in r.linhas] == ["BANCO A", "BANCO B", "BANCO C"]
+    assert r.ok and [lin[0] for lin in r.linhas] == ["BANCO A", "BANCO B", "BANCO C"]
 
 
 def test_ultimo_trimestre_usa_o_periodo_mais_recente_do_ranking(banco):

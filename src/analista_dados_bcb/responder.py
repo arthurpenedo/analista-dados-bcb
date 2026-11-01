@@ -86,19 +86,22 @@ def _fmt(v) -> str:
 def tabela(colunas: list[str], linhas: list[tuple]) -> str:
     if not linhas:
         return "(sem linhas)"
-    cel = [colunas] + [[_fmt(v) for v in l] for l in linhas]
-    larg = [max(len(str(l[i])) for l in cel) for i in range(len(colunas))]
-    fmt = lambda l: " | ".join(str(v).ljust(w) for v, w in zip(l, larg))
-    return "\n".join([fmt(cel[0]), "-+-".join("-" * w for w in larg)] + [fmt(l) for l in cel[1:]])
+    cel = [colunas] + [[_fmt(v) for v in linha] for linha in linhas]
+    larg = [max(len(str(linha[i])) for linha in cel) for i in range(len(colunas))]
+
+    def fmt(linha):
+        return " | ".join(str(v).ljust(w) for v, w in zip(linha, larg))
+
+    return "\n".join([fmt(cel[0]), "-+-".join("-" * w for w in larg)] + [fmt(linha) for linha in cel[1:]])
 
 
 def grafico(colunas: list[str], linhas: list[tuple], largura: int = 30) -> str | None:
     """Barras em texto quando o resultado é (rótulo, número) com 2 a 30 linhas."""
     if len(colunas) < 2 or not 2 <= len(linhas) <= 30:
         return None
-    if not all(isinstance(l[1], (int, float)) and not isinstance(l[1], bool) for l in linhas):
+    if not all(isinstance(lin[1], (int, float)) and not isinstance(lin[1], bool) for lin in linhas):
         return None
-    maior = max(abs(l[1]) for l in linhas) or 1
-    rot = max(len(str(l[0])) for l in linhas)
-    return "\n".join(f"{str(l[0]).ljust(rot)} {'█' * max(1, round(abs(l[1]) / maior * largura))} {_fmt(l[1])}"
-                     for l in linhas)
+    maior = max(abs(lin[1]) for lin in linhas) or 1
+    rot = max(len(str(lin[0])) for lin in linhas)
+    return "\n".join(f"{str(lin[0]).ljust(rot)} {'█' * max(1, round(abs(lin[1]) / maior * largura))} {_fmt(lin[1])}"
+                     for lin in linhas)

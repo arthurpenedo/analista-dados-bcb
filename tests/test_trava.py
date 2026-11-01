@@ -50,7 +50,7 @@ def test_recusa_o_que_nao_e_leitura_permitida(sql):
 def test_execucao_segura_devolve_linhas(banco):
     colunas, linhas = executar_seguro(banco, "SELECT instituicao FROM reclamacoes WHERE ano=2026 AND periodo=2 AND ranking='maiores_bancos' ORDER BY posicao")
     assert colunas == ["instituicao"]
-    assert [l[0] for l in linhas] == ["BANCO A", "BANCO B", "BANCO C"]
+    assert [lin[0] for lin in linhas] == ["BANCO A", "BANCO B", "BANCO C"]
 
 
 def test_segunda_camada_bloqueia_mesmo_se_o_texto_passasse(banco):
