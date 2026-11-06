@@ -23,7 +23,7 @@ PROIBIDAS = {
 FUNCAO_PROIBIDA = re.compile(
     r"^(read_|write_|glob|getenv|current_setting|duckdb_|pragma_|sniff_|parquet_|query|iceberg|delta_|http|"
     r"load_|install_|which_secret|list_secrets|summary|sqlite_)",
-    re.I,
+    re.IGNORECASE,
 )
 FIM_DE_FROM = {"where", "group", "order", "having", "limit", "union", "intersect", "except", "qualify",
                "window", "offset", "fetch"}
@@ -34,7 +34,7 @@ class SQLRecusado(ValueError):
 
 
 def _tokens(sql: str) -> list[str]:
-    sem_comentario = re.sub(r"--[^\n]*|/\*.*?\*/", " ", sql, flags=re.S)
+    sem_comentario = re.sub(r"--[^\n]*|/\*.*?\*/", " ", sql, flags=re.DOTALL)
     return re.findall(
         r"'(?:[^']|'')*'|\"(?:[^\"]|\"\")*\"|[A-Za-z_][A-Za-z_0-9$]*|\d+(?:\.\d+)?|::|<>|<=|>=|\|\||\S",
         sem_comentario,

@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 import urllib.parse
 import urllib.request
+from collections.abc import Callable
 from datetime import date, datetime
-from typing import Callable
 
 SGS = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo}/dados"
 OLINDA = "https://olinda.bcb.gov.br/olinda/servico/"
