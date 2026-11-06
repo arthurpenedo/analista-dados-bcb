@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import http.client
 import json
 import re
 import urllib.request
-from typing import Callable
+from collections.abc import Callable
 
 from .db import ESQUEMA_TEXTO
 
@@ -39,13 +40,13 @@ def ollama_disponivel() -> bool:
     try:
         urllib.request.urlopen("http://localhost:11434/api/tags", timeout=2).read()
         return True
-    except Exception:
+    except (OSError, http.client.HTTPException):  # recusou conexão, estourou o tempo ou resposta quebrada
         return False
 
 
 def extrair_sql(resposta: str) -> str:
     """Pega o SQL de dentro de ```sql ... ``` ou o texto inteiro."""
-    bloco = re.search(r"```(?:sql)?\s*(.*?)```", resposta, re.S | re.I)
+    bloco = re.search(r"```(?:sql)?\s*(.*?)```", resposta, re.DOTALL | re.IGNORECASE)
     return (bloco.group(1) if bloco else resposta).strip().rstrip(";").strip()
 
 
