@@ -88,8 +88,8 @@ def resumo(itens: list[Item]) -> str:
     for i in itens:
         por_grupo.setdefault(i.id[0], []).append(i)
     nomes = {"r": "reclamações", "j": "juros", "s": "séries SGS", "c": "cruzando tabelas"}
-    linhas = [f"Acerto por execução: {sum(i.acertou for i in itens)}/{len(itens)} "
-              f"({100 * sum(i.acertou for i in itens) / len(itens):.1f}%)"]
+    linhas = [(f"Acerto por execução: {sum(i.acertou for i in itens)}/{len(itens)} "
+              f"({100 * sum(i.acertou for i in itens) / len(itens):.1f}%)")]
     for g, lista in por_grupo.items():
         linhas.append(f"  {nomes.get(g, g)}: {sum(i.acertou for i in lista)}/{len(lista)}")
     erros = [i for i in itens if not i.acertou]

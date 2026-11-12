@@ -68,12 +68,12 @@ PERGUNTAS: list[tuple[str, str, str]] = [
     ("r10", "Quais os 5 demais bancos com mais reclamações?", _rec("demais_bancos")),
     ("r11", "Ranking de reclamações do Bradesco", _rec("maiores_bancos", "DESC", None, " AND instituicao = 'BRADESCO'")),
     ("r12", "Qual banco teve mais reclamações no 2º trimestre de 2026?",
-     "SELECT instituicao, indice FROM reclamacoes WHERE ranking = 'maiores_bancos' AND ano = 2026 AND periodo = 2 "
-     "ORDER BY indice DESC, instituicao LIMIT 1"),
+     ("SELECT instituicao, indice FROM reclamacoes WHERE ranking = 'maiores_bancos' AND ano = 2026 AND periodo = 2 "
+     "ORDER BY indice DESC, instituicao LIMIT 1")),
     ("r13", "Quais bancos têm índice de reclamações acima de 50?", _rec("maiores_bancos", "DESC", None, " AND indice > 50")),
     ("r14", "Quantos bancos aparecem no ranking dos maiores bancos?",
-     "SELECT count(*) FROM reclamacoes WHERE ranking = 'maiores_bancos' AND ano * 10 + periodo = "
-     "(SELECT max(ano * 10 + periodo) FROM reclamacoes WHERE ranking = 'maiores_bancos')"),
+     ("SELECT count(*) FROM reclamacoes WHERE ranking = 'maiores_bancos' AND ano * 10 + periodo = "
+     "(SELECT max(ano * 10 + periodo) FROM reclamacoes WHERE ranking = 'maiores_bancos')")),
     # --- juros
     ("j01", "Qual banco cobra menos juros no cartão rotativo?", _jur(ROT, "ASC", 1)),
     ("j02", "Qual a menor taxa de juros do cheque especial?", _jur(CHEQUE, "ASC", 1)),
@@ -105,11 +105,11 @@ PERGUNTAS: list[tuple[str, str, str]] = [
     ("s05", "Qual foi o IPCA de agosto de 2026?", _mes("ipca_mensal", 2026, 8)),
     ("s06", "Qual o IPCA acumulado em 12 meses?", _acum12("ipca_mensal")),
     ("s07", "Qual o IPCA acumulado em 2025?",
-     "SELECT round((product(1 + valor / 100) - 1) * 100, 2) FROM serie_sgs "
-     "WHERE serie = 'ipca_mensal' AND data BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'"),
+     ("SELECT round((product(1 + valor / 100) - 1) * 100, 2) FROM serie_sgs "
+     "WHERE serie = 'ipca_mensal' AND data BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'")),
     ("s08", "Qual a média da Selic em 2025?",
-     "SELECT round(avg(valor), 2) FROM serie_sgs WHERE serie = 'selic_meta' "
-     "AND data BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'"),
+     ("SELECT round(avg(valor), 2) FROM serie_sgs WHERE serie = 'selic_meta' "
+     "AND data BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'")),
     ("s09", "Qual foi o maior IPCA mensal desde 2018?",
      "SELECT data, valor FROM serie_sgs WHERE serie = 'ipca_mensal' ORDER BY valor DESC, data DESC LIMIT 1"),
     ("s10", "Qual o IGP-M mais recente?", _ultimo("igpm_mensal")),
@@ -122,11 +122,11 @@ PERGUNTAS: list[tuple[str, str, str]] = [
     ("s14", "Qual o IGP-M acumulado em 12 meses?", _acum12("igpm_mensal")),
     # --- cruzando tabelas
     ("c01", "Qual a taxa do cartão rotativo no banco com mais reclamações?",
-     f"SELECT instituicao, taxa_mes FROM juros_semanal WHERE modalidade = {ROT} "
+     (f"SELECT instituicao, taxa_mes FROM juros_semanal WHERE modalidade = {ROT} "
      "AND inicio = (SELECT max(inicio) FROM juros_semanal) AND strip_accents(instituicao) ILIKE '%' || "
      "(SELECT split_part(instituicao, ' ', 1) FROM reclamacoes WHERE ranking = 'maiores_bancos' "
-     "ORDER BY ano DESC, periodo DESC, indice DESC LIMIT 1) || '%'"),
+     "ORDER BY ano DESC, periodo DESC, indice DESC LIMIT 1) || '%'")),
     ("c02", "A Selic atual está acima da média da Selic em 2025?",
-     "SELECT (SELECT valor FROM serie_sgs WHERE serie = 'selic_meta' ORDER BY data DESC LIMIT 1) > "
-     "(SELECT avg(valor) FROM serie_sgs WHERE serie = 'selic_meta' AND year(data) = 2025)"),
+     ("SELECT (SELECT valor FROM serie_sgs WHERE serie = 'selic_meta' ORDER BY data DESC LIMIT 1) > "
+     "(SELECT avg(valor) FROM serie_sgs WHERE serie = 'selic_meta' AND year(data) = 2025)")),
 ]
