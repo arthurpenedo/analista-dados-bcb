@@ -59,7 +59,7 @@ def _com_modelo(banco, pergunta, modelo, chamar) -> Resposta:
     for _ in range(2):  # uma tentativa + uma correção devolvendo o erro ao modelo
         try:
             sql = llm.gerar_sql(pergunta, modelo, chamar, erro)
-        except Exception as e:  # Ollama fora do ar, modelo não baixado...
+        except Exception as e:  # noqa: BLE001 - Ollama fora do ar, modelo não baixado, etc.: vira resposta com erro
             return Resposta(pergunta, "ollama", erro=f"modelo indisponível: {e}")
         r = _executar(banco, pergunta, "ollama", sql)
         if r.ok:

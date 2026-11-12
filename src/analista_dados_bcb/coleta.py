@@ -58,7 +58,7 @@ def coletar_series(con, buscar: Buscar = buscar_json, desde: str = "01/01/2018")
         url = SGS.format(codigo=codigo) + f"?formato=json&dataInicial={desde}&dataFinal={hoje}"
         dados = buscar(url)
         if not isinstance(dados, list):  # a API devolve um objeto de erro (ex.: janela > 10 anos em série diária)
-            raise RuntimeError(f"SGS {codigo} devolveu {str(dados)[:200]}")
+            raise RuntimeError(f"SGS {codigo} devolveu {str(dados)[:200]}")  # noqa: TRY004 - erro da API, não de tipo
         con.execute("DELETE FROM serie_sgs WHERE codigo = ?", [codigo])
         linhas = [
             (codigo, nome, datetime.strptime(d["data"], "%d/%m/%Y").date(), float(d["valor"]))
