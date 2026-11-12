@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import http.client
 import json
 import urllib.parse
 import urllib.request
@@ -27,7 +28,7 @@ def buscar_json(url: str, tentativas: int = 3):
         try:
             with urllib.request.urlopen(url, timeout=90) as r:
                 return json.loads(r.read().decode("utf-8"))
-        except Exception as e:  # rede instável: tenta de novo
+        except (OSError, ValueError, http.client.HTTPException) as e:  # rede instável ou JSON quebrado: tenta de novo
             ultimo = e
     raise RuntimeError(f"falha ao buscar {url[:120]}: {ultimo}")
 
