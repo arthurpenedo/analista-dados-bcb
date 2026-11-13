@@ -90,7 +90,7 @@ def tabela(colunas: list[str], linhas: list[tuple]) -> str:
     larg = [max(len(str(linha[i])) for linha in cel) for i in range(len(colunas))]
 
     def fmt(linha):
-        return " | ".join(str(v).ljust(w) for v, w in zip(linha, larg))
+        return " | ".join(str(v).ljust(w) for v, w in zip(linha, larg, strict=True))
 
     return "\n".join([fmt(cel[0]), "-+-".join("-" * w for w in larg)] + [fmt(linha) for linha in cel[1:]])
 
