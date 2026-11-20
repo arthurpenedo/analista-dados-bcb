@@ -45,13 +45,17 @@ def chaves_de_bancos(nomes) -> dict[str, str]:
     return chaves
 
 
+LIMITE_MAX = 100
+
+
 def _limite(q: str, padrao: int) -> int:
     if re.search(r"\bqual (banco|instituicao|financeira|o banco)\b|\bo banco que\b"
                  r"|\bqual (?:a|o|era a|foi a) (?:menor|maior|melhor|pior)\b", q):
         return 1
     m = re.search(r"\btop\s*(\d+)|\b(?:os|as)\s+(\d+)\b|\b(\d+)\s+(?:bancos|instituicoes|maiores|menores)", q)
     if m:
-        return int(next(g for g in m.groups() if g))
+        n = next(g for g in m.groups() if g)
+        return min(max(int(n[:6]), 1), LIMITE_MAX)  # "top 0" vira 1; número gigante não estoura o LIMIT
     return padrao
 
 

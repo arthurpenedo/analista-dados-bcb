@@ -150,3 +150,11 @@ def test_cli_benchmark_grava_html(banco, tmp_path):
 @pytest.mark.parametrize("pergunta", ["Qual a Selic atual?", "Qual o último IPCA?", "Qual o IGP-M mais recente?"])
 def test_series_basicas(banco, pergunta):
     assert perguntar(banco, pergunta).ok
+
+
+def test_limite_do_top_e_travado_entre_1_e_100():
+    from analista_dados_bcb.regras import _limite
+    assert _limite("top 0 bancos", 5) == 1
+    assert _limite("top 7 bancos", 5) == 7
+    assert _limite("top 99999999999999999999999 bancos", 5) == 100
+    assert _limite("juros do cheque", 5) == 5
