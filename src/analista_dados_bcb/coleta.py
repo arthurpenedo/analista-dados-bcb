@@ -38,7 +38,10 @@ def _paginar(base: str, buscar: Buscar) -> list[dict]:
     while True:
         sep = "&" if "?" in base else "?"
         url = f"{base}{sep}$format=json&$top={PAGINA}&$skip={pulo}"
-        lote = buscar(url)["value"]
+        resposta = buscar(url)
+        lote = resposta.get("value") if isinstance(resposta, dict) else None
+        if not isinstance(lote, list):
+            raise TypeError(f"resposta inesperada da API (sem lista 'value'): {url[:120]}")
         linhas += lote
         if len(lote) < PAGINA:
             return linhas

@@ -54,3 +54,12 @@ def test_erro_do_sgs_vira_mensagem_clara(tmp_path):
     con = db.conectar(str(tmp_path / "x.duckdb"))
     with pytest.raises(RuntimeError, match="SGS 432"):
         coleta.coletar_series(con, lambda url: {"error": "janela maior que 10 anos"})
+
+
+def test_paginar_resposta_sem_value_da_erro_claro():
+    import pytest
+
+    with pytest.raises(TypeError, match="resposta inesperada"):
+        coleta._paginar("http://x/api", lambda url: {"error": "boom"})
+    with pytest.raises(TypeError, match="resposta inesperada"):
+        coleta._paginar("http://x/api", lambda url: [])
