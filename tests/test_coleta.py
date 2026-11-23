@@ -63,3 +63,16 @@ def test_paginar_resposta_sem_value_da_erro_claro():
         coleta._paginar("http://x/api", lambda url: {"error": "boom"})
     with pytest.raises(TypeError, match="resposta inesperada"):
         coleta._paginar("http://x/api", lambda url: [])
+
+
+def test_paginar_pagina_cheia_pede_a_proxima_e_para_na_vazia():
+    chamadas = []
+
+    def buscar(url):
+        chamadas.append(url)
+        return {"value": [{"n": 1}] * coleta.PAGINA} if len(chamadas) == 1 else {"value": []}
+
+    linhas = coleta._paginar("http://x/api", buscar)
+    assert len(linhas) == coleta.PAGINA
+    assert len(chamadas) == 2
+    assert f"$skip={coleta.PAGINA}" in chamadas[1]
