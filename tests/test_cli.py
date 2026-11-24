@@ -1,4 +1,13 @@
+import pytest
+
 from analista_dados_bcb import benchmark, cli, coleta, llm, responder
+
+
+@pytest.fixture(autouse=True)
+def _banco_padrao(tmp_path, monkeypatch):
+    """Os comandos de consulta exigem o banco; cria um vazio no lugar do `bcb.duckdb` padrão."""
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "bcb.duckdb").touch()
 
 
 def test_coletar_imprime_contagens(tmp_path, monkeypatch, capsys):
@@ -35,3 +44,18 @@ def test_benchmark_grava_md_e_html(tmp_path, monkeypatch):
     assert "# Benchmark (regras)" in md.read_text(encoding="utf-8")
     assert "Acerto: 1/1" in md.read_text(encoding="utf-8")
     assert html.read_text(encoding="utf-8") == "<html>demo</html>"
+
+
+def test_consulta_sem_banco_devolve_2_e_nao_cria_arquivo(tmp_path, capsys):
+    ausente = tmp_path / "pasta" / "nao.duckdb"
+    assert cli.main(["--banco", str(ausente), "perguntar", "selic"]) == 2
+    assert "Banco não encontrado" in capsys.readouterr().err
+    assert not ausente.parent.exists()
+
+
+def test_benchmark_saida_em_pasta_inexistente_cria_a_pasta(tmp_path, monkeypatch):
+    monkeypatch.setattr(benchmark, "rodar", lambda banco, motor, modelo: [])
+    monkeypatch.setattr(benchmark, "resumo", lambda itens: "ok")
+    md = tmp_path / "novo" / "r.md"
+    assert cli.main(["benchmark", "--saida", str(md)]) == 0
+    assert md.exists()

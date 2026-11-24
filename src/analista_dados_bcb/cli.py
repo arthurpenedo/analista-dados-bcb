@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 import time
+from pathlib import Path
 
 from . import db, llm
 
@@ -40,10 +41,12 @@ def _benchmark(args) -> int:
     texto = benchmark.resumo(itens)
     print(texto)
     if args.saida:
+        Path(args.saida).parent.mkdir(parents=True, exist_ok=True)
         with open(args.saida, "w", encoding="utf-8") as f:
             f.write(f"# Benchmark ({args.motor}" + (f", {args.modelo}" if args.motor == "ollama" else "") + ")\n\n")
             f.write("```\n" + texto + "\n```\n")
     if args.html:
+        Path(args.html).parent.mkdir(parents=True, exist_ok=True)
         with open(args.html, "w", encoding="utf-8") as f:
             f.write(benchmark.pagina_html(itens, args.motor))
     return 0
@@ -69,6 +72,9 @@ def main(argv: list[str] | None = None) -> int:
     com_motor(pb)
     pb.set_defaults(fn=_benchmark)
     args = p.parse_args(argv)
+    if args.cmd != "coletar" and not Path(args.banco).is_file():
+        print(f"Banco não encontrado: {args.banco}. Rode `analista-dados-bcb coletar` antes.", file=sys.stderr)
+        return 2
     return args.fn(args)
 
 
