@@ -69,3 +69,15 @@ def test_benchmark_com_pasta_no_lugar_do_arquivo_devolve_2_sem_rodar(tmp_path, m
     for opcao in ("--saida", "--html"):
         assert cli.main(["benchmark", opcao, str(tmp_path)]) == 2
     assert "pasta" in capsys.readouterr().err
+
+
+def test_benchmark_com_saida_dentro_de_arquivo_devolve_2_sem_rodar(tmp_path, monkeypatch, capsys):
+    def nao_deve_rodar(*a):
+        raise AssertionError("o benchmark não devia rodar")
+
+    monkeypatch.setattr(benchmark, "rodar", nao_deve_rodar)
+    arq = tmp_path / "arq.txt"
+    arq.write_text("x", encoding="utf-8")
+    for opcao in ("--saida", "--html"):
+        assert cli.main(["benchmark", opcao, str(arq / "x.md")]) == 2
+    assert "passa por um arquivo" in capsys.readouterr().err

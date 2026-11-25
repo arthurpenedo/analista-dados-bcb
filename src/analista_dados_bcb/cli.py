@@ -80,6 +80,10 @@ def main(argv: list[str] | None = None) -> int:
         if destino and Path(destino).is_dir():
             print(f"--{opcao} aponta para uma pasta ({destino}); informe um arquivo.", file=sys.stderr)
             return 2
+        if destino and any(a.is_file() for a in Path(destino).parents):
+            print(f"--{opcao} passa por um arquivo ({destino}); informe um caminho dentro de uma pasta.",
+                  file=sys.stderr)
+            return 2
     return args.fn(args)
 
 
