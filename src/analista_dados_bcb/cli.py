@@ -75,6 +75,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd != "coletar" and not Path(args.banco).is_file():
         print(f"Banco não encontrado: {args.banco}. Rode `analista-dados-bcb coletar` antes.", file=sys.stderr)
         return 2
+    for opcao in ("saida", "html"):
+        destino = getattr(args, opcao, None)
+        if destino and Path(destino).is_dir():
+            print(f"--{opcao} aponta para uma pasta ({destino}); informe um arquivo.", file=sys.stderr)
+            return 2
     return args.fn(args)
 
 

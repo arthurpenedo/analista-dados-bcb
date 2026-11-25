@@ -59,3 +59,13 @@ def test_benchmark_saida_em_pasta_inexistente_cria_a_pasta(tmp_path, monkeypatch
     md = tmp_path / "novo" / "r.md"
     assert cli.main(["benchmark", "--saida", str(md)]) == 0
     assert md.exists()
+
+
+def test_benchmark_com_pasta_no_lugar_do_arquivo_devolve_2_sem_rodar(tmp_path, monkeypatch, capsys):
+    def nao_deve_rodar(*a):
+        raise AssertionError("o benchmark não devia rodar")
+
+    monkeypatch.setattr(benchmark, "rodar", nao_deve_rodar)
+    for opcao in ("--saida", "--html"):
+        assert cli.main(["benchmark", opcao, str(tmp_path)]) == 2
+    assert "pasta" in capsys.readouterr().err
